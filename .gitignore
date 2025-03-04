@@ -16,3 +16,11 @@ planter
 .idea
 
 .DS_Store
+
+# PLANTUML jar
+*.jar
+
+## output files
+*uml.txt
+*tables.txt
+*uml.png

@@ -130,7 +130,7 @@ func TestLoadForeignKeyDef(t *testing.T) {
 	defer cleanup()
 
 	schema := "public"
-	tbls, err := LoadTableDef(conn, schema)
+	tbls, err := PlanterLoadTableDef(conn, schema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,7 +182,7 @@ func TestLoadTableDef(t *testing.T) {
 	defer cleanup()
 
 	schema := "public"
-	tbls, err := LoadTableDef(conn, schema)
+	tbls, err := PlanterLoadTableDef(conn, schema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -202,12 +202,12 @@ func TestTableToUMLEntry(t *testing.T) {
 	defer cleanup()
 
 	schema := "public"
-	tbls, err := LoadTableDef(conn, schema)
+	tbls, err := PlanterLoadTableDef(conn, schema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	buf, err := TableToUMLEntry(tbls)
+	buf, err := PlanterTableToUMLEntry(tbls)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -219,12 +219,12 @@ func TestForeignKeyToUMLRelation(t *testing.T) {
 	defer cleanup()
 
 	schema := "public"
-	tbls, err := LoadTableDef(conn, schema)
+	tbls, err := PlanterLoadTableDef(conn, schema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	buf, err := ForeignKeyToUMLRelation(tbls)
+	buf, err := SqlForeignKeyToUMLRelation(tbls)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by table1", func(t *testing.T) {
 			filters := []string{"table1"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -253,7 +253,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by table2", func(t *testing.T) {
 			filters := []string{"table2"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -264,7 +264,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by t", func(t *testing.T) {
 			filters := []string{"t"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 2 {
 				t.Errorf("want %d got %d", 2, len(retval))
 			}
@@ -278,7 +278,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by table\d`, func(t *testing.T) {
 			filters := []string{`table\d`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 2 {
 				t.Errorf("want %d got %d", 2, len(retval))
 			}
@@ -292,7 +292,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by ta*`, func(t *testing.T) {
 			filters := []string{`ta*`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 2 {
 				t.Errorf("want %d got %d", 2, len(retval))
 			}
@@ -306,7 +306,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by [a-z].*1`, func(t *testing.T) {
 			filters := []string{`[a-z].*1`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -317,7 +317,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by ^table$`, func(t *testing.T) {
 			filters := []string{`^t$`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 0 {
 				t.Errorf("want %d got %d", 0, len(retval))
 			}
@@ -330,7 +330,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by table1", func(t *testing.T) {
 			filters := []string{"table1"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -341,7 +341,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by table2 xxx", func(t *testing.T) {
 			filters := []string{"table2"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -352,7 +352,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run("filtered by t", func(t *testing.T) {
 			filters := []string{"t"}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 0 {
 				t.Errorf("want %d got %d", 0, len(retval))
 			}
@@ -360,7 +360,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by table\d`, func(t *testing.T) {
 			filters := []string{`table\d`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 0 {
 				t.Errorf("want %d got %d", 0, len(retval))
 			}
@@ -368,7 +368,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by ta*`, func(t *testing.T) {
 			filters := []string{`ta*`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 0 {
 				t.Errorf("want %d got %d", 0, len(retval))
 			}
@@ -376,7 +376,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by [a-z].*1`, func(t *testing.T) {
 			filters := []string{`[a-z].*1`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 1 {
 				t.Errorf("want %d got %d", 1, len(retval))
 			}
@@ -387,7 +387,7 @@ func TestFilterTables(t *testing.T) {
 		t.Run(`filtered by ^table$`, func(t *testing.T) {
 			filters := []string{`^t$`}
 
-			retval := FilterTables(match, tables, filters)
+			retval := SqlFilterTables(match, tables, filters)
 			if len(retval) != 2 {
 				t.Errorf("want %d got %d", 2, len(retval))
 			}

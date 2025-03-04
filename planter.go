@@ -20,8 +20,8 @@ type Queryer interface {
 	QueryRow(string, ...interface{}) *sql.Row
 }
 
-// OpenDB opens database connection
-func OpenDB(connStr string) (*sql.DB, error) {
+// SqlOpenDB opens database connection
+func SqlOpenDB(connStr string) (*sql.DB, error) {
 	conn, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to database")
@@ -58,10 +58,10 @@ type ForeignKey struct {
 
 // IsOneToOne returns true if one to one relation
 // - in case of composite pk
-//     * one to one
-//         * source table is composite pk && target table is composite pk
-//             * source table fks to target table are all pks
-//     * other cases are one to many
+//   - one to one
+//   - source table is composite pk && target table is composite pk
+//   - source table fks to target table are all pks
+//   - other cases are one to many
 func (k *ForeignKey) IsOneToOne() bool {
 	switch {
 	case k.SourceTable.IsCompositePK() && k.TargetTable.IsCompositePK():
@@ -212,8 +212,8 @@ func LoadForeignKeyDef(db Queryer, schema string, tbls []*Table, tbl *Table) ([]
 	return fks, nil
 }
 
-// LoadTableDef load Postgres table definition
-func LoadTableDef(db Queryer, schema string) ([]*Table, error) {
+// PlanterLoadTableDef load Postgres table definition
+func PlanterLoadTableDef(db Queryer, schema string) ([]*Table, error) {
 	tbDefs, err := db.Query(tableDefSQL, schema)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load table def")
@@ -245,8 +245,8 @@ func LoadTableDef(db Queryer, schema string) ([]*Table, error) {
 	return tbls, nil
 }
 
-// TableToUMLEntry table entry
-func TableToUMLEntry(tbls []*Table) ([]byte, error) {
+// PlanterTableToUMLEntry table entry
+func PlanterTableToUMLEntry(tbls []*Table) ([]byte, error) {
 	tpl, err := template.New("entry").Parse(entryTmpl)
 	if err != nil {
 		return nil, err
@@ -262,8 +262,8 @@ func TableToUMLEntry(tbls []*Table) ([]byte, error) {
 	return src, nil
 }
 
-// ForeignKeyToUMLRelation relation
-func ForeignKeyToUMLRelation(tbls []*Table) ([]byte, error) {
+// SqlForeignKeyToUMLRelation relation
+func SqlForeignKeyToUMLRelation(tbls []*Table) ([]byte, error) {
 	tpl, err := template.New("relation").Parse(relationTmpl)
 	if err != nil {
 		return nil, err
@@ -290,8 +290,8 @@ func contains(v string, r []*regexp.Regexp) bool {
 	return false
 }
 
-// FilterTables filter tables
-func FilterTables(match bool, tbls []*Table, tblNames []string) []*Table {
+// SqlFilterTables filter tables
+func SqlFilterTables(match bool, tbls []*Table, tblNames []string) []*Table {
 	sort.Strings(tblNames)
 
 	var tblExps []*regexp.Regexp

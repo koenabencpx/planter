@@ -20,12 +20,15 @@ A team with only software engineers doesn't need ER diagram that much as long as
 go get -u github.com/achiku/planter
 ```
 
-## Quick Start
+## Quick Start on linux
 
 ```
 $ planter postgres://planter@localhost/planter?sslmode=disable -o example.uml
 $ java -jar plantuml.jar -verbose example.uml
 ```
+
+
+
 
 ![er diagram](./example/example_gen.png)
 
